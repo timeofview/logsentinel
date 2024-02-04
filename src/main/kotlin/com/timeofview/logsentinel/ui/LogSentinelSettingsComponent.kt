@@ -19,17 +19,22 @@ class LogSentinelSettingsComponent {
         panel.border = EmptyBorder(0, 0, 0, 0)
         panel.add(logFilePathField)
         for (sentinelComponent in sentinelComponents) {
-            panel.add(sentinelComponent)
-            panel.add(Box.createVerticalStrut(5))
+            addNewSentinelToPanel(sentinelComponent)
         }
         panel.add(addNewSentinel)
 
         addNewSentinel.addActionListener{
             val sentinelComponent = SentinelComponent()
             sentinelComponents+= sentinelComponent
-            panel.add(sentinelComponent)
-            panel.add(Box.createVerticalStrut(5))
+            panel.remove(addNewSentinel)
+            addNewSentinelToPanel(sentinelComponent)
+            panel.add(addNewSentinel)
         }
+    }
+
+    private fun addNewSentinelToPanel(sentinelComponent: SentinelComponent) {
+        panel.add(sentinelComponent)
+        panel.add(Box.createVerticalStrut(5))
     }
 
     fun setData(logFilePath: String, sentinels: List<Sentinel>) {
