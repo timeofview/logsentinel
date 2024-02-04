@@ -1,59 +1,66 @@
-package com.timeofview.logsentinel.config
+package com.timeofview.logsentinel.ui
 
-import com.intellij.openapi.fileChooser.FileChooser
-import com.intellij.openapi.fileChooser.FileChooserDescriptor
-import com.intellij.openapi.vfs.VirtualFile
-import java.io.File
+import com.timeofview.logsentinel.model.AUDIO_FILE
+import com.timeofview.logsentinel.player.SoundPlayer
 import javax.swing.JButton
 import javax.swing.JComboBox
 import javax.swing.JLabel
 import javax.swing.JPanel
 
-class AudioPathSelectorComponent {
+class AudioPathSelectorComponent : JPanel() {
 
-    val panel = JPanel()
+    val panel = this
     private val audioPathComboBox = JComboBox<String>()
-    private val addButton = JButton("Add")
+    private val addButton = FileChooserComponent("Add", { addAudioFile(it) })
     private val playButton = JButton("Play")
 
     init {
         panel.add(JLabel("Audio Path:"))
         panel.add(audioPathComboBox)
-        panel.add(addButton)
+//        panel.add(addButton)
         panel.add(playButton)
 
         loadAudioFiles()
-
-        addButton.addActionListener {
-            val fileChooserDescriptor = FileChooserDescriptor(true, false, false, false, true, false)
-            fileChooserDescriptor.description = "Select Audio File"
-            fileChooserDescriptor.title = "Add Audio File"
-            val file = FileChooser.chooseFile(fileChooserDescriptor, null, null)
-            file?.let { addAudioFile(it) }
-        }
-
+        addButton.isEnabled = false
         playButton.addActionListener {
             val selectedAudioPath = audioPathComboBox.selectedItem as String?
             selectedAudioPath?.let { playAudioFile(it) }
         }
     }
 
-    private fun loadAudioFiles() {
-        // Carica l'elenco dei file audio dalle risorse e aggiungili al JComboBox
-        val resourceFolder = File(this::class.java.classLoader.getResource("audio")?.toURI()!!)
-        resourceFolder.listFiles()?.forEach {
-            if (it.isFile) {
-                audioPathComboBox.addItem(it.absolutePath)
+    public fun getAudio(): String {
+        return audioPathComboBox.selectedItem?.toString() ?: ""
+    }
+
+    public fun selectAudio(audio: String) {
+        if (audio == null) {
+            return
+        }
+        for (i in 0..audioPathComboBox.itemCount) {
+            val item = audioPathComboBox.getItemAt(i)
+            if (item.toString() == audio) {
+                audioPathComboBox.selectedItem = item
             }
         }
     }
 
-    private fun addAudioFile(file: VirtualFile) {
-        // Aggiungi il file selezionato al JComboBox
-        audioPathComboBox.addItem(file.path)
+    private fun loadAudioFiles() {
+        for (audio in AUDIO_FILE.values()) {
+            audioPathComboBox.addItem(audio.label)
+        }
     }
 
-    private fun playAudioFile(audioPath: String) {
-        // Implementa la logica per riprodurre il file audio
+    private fun addAudioFile(file: String) {
+        audioPathComboBox.addItem(file)
+    }
+
+    private fun playAudioFile(audioLabel: String) {
+        for (audio in AUDIO_FILE.values()) {
+            if (audioLabel == audio.label) {
+                val soundPlayer = SoundPlayer()
+                soundPlayer.playSound(audio.path)
+            }
+        }
+
     }
 }

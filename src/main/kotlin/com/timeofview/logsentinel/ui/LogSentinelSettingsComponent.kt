@@ -1,23 +1,44 @@
-package com.timeofview.logsentinel.config
+package com.timeofview.logsentinel.ui
 
-import com.intellij.openapi.fileChooser.FileChooser
-import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
-import com.timeofview.logsentinel.player.SoundPlayer
-import com.timeofview.logsentinel.ui.FileChooserComponent
-import javax.swing.*
+import com.timeofview.logsentinel.model.Sentinel
+import javax.swing.Box
+import javax.swing.BoxLayout
+import javax.swing.JButton
+import javax.swing.JPanel
+import javax.swing.border.EmptyBorder
 
 class LogSentinelSettingsComponent {
     val panel = JPanel()
 
-    private val logFilePathField = FileChooserComponent("Choose Log File")
-    private val chooseLogFileButton = JButton("Choose Log File")
+    val logFilePathField = FileChooserComponent("Choose Log File")
+    val sentinelComponents: MutableList<SentinelComponent> = mutableListOf()
+    private val addNewSentinel = JButton("+")
 
     init {
         panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-        val firstRow = JPanel()
-        firstRow.add(logFilePathField)
+        panel.border = EmptyBorder(0, 0, 0, 0)
+        panel.add(logFilePathField)
+        for (sentinelComponent in sentinelComponents) {
+            panel.add(sentinelComponent)
+            panel.add(Box.createVerticalStrut(5))
+        }
+        panel.add(addNewSentinel)
 
+        addNewSentinel.addActionListener{
+            val sentinelComponent = SentinelComponent()
+            sentinelComponents+= sentinelComponent
+            panel.add(sentinelComponent)
+            panel.add(Box.createVerticalStrut(5))
+        }
     }
 
+    fun setData(logFilePath: String, sentinels: List<Sentinel>) {
+        logFilePathField.setSelectedFilePath(logFilePath)
+        for (sentinel in sentinels) {
+            val element = SentinelComponent()
+            element.setSentinelData(sentinel)
+            this.sentinelComponents.add(element)
+        }
+    }
 
 }

@@ -1,4 +1,9 @@
 package com.timeofview.logsentinel.model
 
-class Sentinel {
-}
+data class Sentinel(
+    var triggerString: String,
+    var messageString: String,
+    var isEnabledPopup: Boolean,
+    var isEnabledSound: Boolean,
+    var audioPath: String
+)
