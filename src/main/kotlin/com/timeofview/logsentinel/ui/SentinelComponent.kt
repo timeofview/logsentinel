@@ -7,9 +7,8 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 import javax.swing.JTextField
 
-class SentinelComponent : JPanel(GridLayout(0, 2)) {
+class SentinelComponent (panel: JPanel = JPanel(GridLayout(0, 2))) : AccordionComponent(panel) {
 
-    val panel = this
     private val triggerStringField = JTextField(20)
     private val messageStringField = JTextField(20)
     private val isEnabledPopupCheckbox = JCheckBox("Enable Popup Notifications")
